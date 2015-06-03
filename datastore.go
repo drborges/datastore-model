@@ -68,7 +68,11 @@ func (this Datastore) Load(e entity) error {
 	if !e.HasKey() {
 		e.setKey(e.NewKey(this.Context))
 	}
-	return datastore.Get(this.Context, e.Key(), e)
+	err := datastore.Get(this.Context, e.Key(), e)
+	if err == datastore.ErrNoSuchEntity {
+		return ErrNoSuchEntity
+	}
+	return err
 }
 
 // Delete deletes an entity from datastore
