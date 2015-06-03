@@ -2,6 +2,11 @@ package db
 
 import (
 	"appengine/datastore"
+	"errors"
+)
+
+var (
+	ErrInvalidUUID = errors.New("Invalid UUID")
 )
 
 // Model represents a datastore entity
@@ -42,6 +47,9 @@ func (this *Model) UUID() string {
 // Currently the UUID is the encoded datastore key
 func (this *Model) SetUUID(uuid string) error {
 	key, err := datastore.DecodeKey(uuid)
+	if err != nil {
+		return ErrInvalidUUID
+	}
 	this.key = key
 	return err
 }

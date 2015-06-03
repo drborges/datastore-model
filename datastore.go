@@ -47,6 +47,14 @@ func (this Datastore) Create(e entity) error {
 	return err
 }
 
+func (this Datastore) Save(e entity) error {
+    if err := this.Load(e); err != nil {
+        return err
+    }
+    _, err := datastore.Put(this.Context, e.Key(), e);
+    return err
+}
+
 // Load loads entity data from datastore
 //
 // In case the entity has no key yet assigned
@@ -60,8 +68,11 @@ func (this Datastore) Load(e entity) error {
 	if !e.HasKey() {
 		e.setKey(e.NewKey(this.Context))
 	}
-
-	return datastore.Get(this.Context, e.Key(), e)
+	err := datastore.Get(this.Context, e.Key(), e)
+	if err == datastore.ErrNoSuchEntity {
+		return ErrNoSuchEntity
+	}
+	return err
 }
 
 // Delete deletes an entity from datastore
