@@ -47,7 +47,7 @@ func (this Datastore) Create(e entity) error {
 	return err
 }
 
-func (this Datastore) Save(e entity) error {
+func (this Datastore) Update(e entity) error {
     if err := this.Load(e); err != nil {
         return err
     }
