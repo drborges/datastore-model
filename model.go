@@ -15,7 +15,7 @@ var (
 // your models have a non pointer Entity
 // embedded
 type Model struct {
-	key *datastore.Key       `json:"-",datastore:"-"`
+	key       *datastore.Key `json:"-",datastore:"-"`
 	parentKey *datastore.Key `json:"-",datastore:"-"`
 }
 

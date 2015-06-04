@@ -43,17 +43,17 @@ func (this Datastore) Create(e entity) error {
 		return ErrEntityExists
 	}
 
-	key, err := datastore.Put(this.Context, this.NewKeyFor(e), e);
+	key, err := datastore.Put(this.Context, this.NewKeyFor(e), e)
 	e.SetKey(key)
 	return err
 }
 
 func (this Datastore) Update(e entity) error {
-    if err := this.Load(e); err != nil {
-        return err
-    }
-    _, err := datastore.Put(this.Context, e.Key(), e);
-    return err
+	if err := this.Load(e); err != nil {
+		return err
+	}
+	_, err := datastore.Put(this.Context, e.Key(), e)
+	return err
 }
 
 // Load loads entity data from datastore
@@ -121,12 +121,14 @@ func (this Datastore) extractIDs(e entity) (string, int64) {
 		value := elemValue.Field(i)
 		if tag == "id" {
 			switch field.Type.Kind() {
-				case reflect.String: return value.String(), 0
-				case reflect.Int,
-					reflect.Int8,
-					reflect.Int16,
-					reflect.Int32,
-					reflect.Int64: return "", value.Int()
+			case reflect.String:
+				return value.String(), 0
+			case reflect.Int,
+				reflect.Int8,
+				reflect.Int16,
+				reflect.Int32,
+				reflect.Int64:
+				return "", value.Int()
 			}
 		}
 	}

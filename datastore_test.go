@@ -1,10 +1,10 @@
 package db_test
 
 import (
-	"testing"
-	"github.com/drborges/datastore-model"
 	"appengine/aetest"
+	"github.com/drborges/datastore-model"
 	"github.com/drborges/goexpect"
+	"testing"
 )
 
 type Person struct {
@@ -26,8 +26,8 @@ type Post struct {
 
 type Account struct {
 	db.Model
-	RegistrationNum int64 `db:"id"`
-	Name string           `db:"id"`
+	RegistrationNum int64  `db:"id"`
+	Name            string `db:"id"`
 }
 
 func TestDatastoreNewKeyForStringID(t *testing.T) {
@@ -171,7 +171,6 @@ func TestDatastoreUpdateReturnsErrNoSuchEntity(t *testing.T) {
 	expect := goexpect.New(t)
 	expect(err).ToBe(db.ErrNoSuchEntity)
 }
-
 
 func TestDatastoreDelete(t *testing.T) {
 	t.Parallel()
