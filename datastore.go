@@ -8,7 +8,12 @@ import (
 )
 
 var (
+	// ErrNoSuchEntity returned whenever a non existent
+	// key is used to retrieve, update or delete
 	ErrNoSuchEntity = errors.New("Entity not found")
+
+	// ErrEntityExists returned when creating an entity
+	// with a key that is already being used
 	ErrEntityExists = errors.New("Entity already exists")
 )
 
@@ -48,6 +53,10 @@ func (this Datastore) Create(e entity) error {
 	return err
 }
 
+// Update updated an entity in datastore
+//
+// ErrNoSuchEntity is returned if the given
+// entity does not exist in datastore
 func (this Datastore) Update(e entity) error {
 	if err := this.Load(e); err != nil {
 		return err

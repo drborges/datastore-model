@@ -6,14 +6,16 @@ import (
 )
 
 var (
+	// ErrInvalidUUID returned if an invalid
+	// UUID is passed to SetUUID
 	ErrInvalidUUID = errors.New("Invalid UUID")
 )
 
 // Model represents a datastore entity
 //
-// In order to add Datastore support to
-// your models have a non pointer Entity
-// embedded
+// Embedding this type to a struct allows
+// it to be used as an entity type in
+// Datastore service
 type Model struct {
 	key       *datastore.Key `json:"-",datastore:"-"`
 	parentKey *datastore.Key `json:"-",datastore:"-"`
