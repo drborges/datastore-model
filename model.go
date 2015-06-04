@@ -15,7 +15,8 @@ var (
 // your models have a non pointer Entity
 // embedded
 type Model struct {
-	key *datastore.Key `json:"-",datastore:"-"`
+	key *datastore.Key       `json:"-",datastore:"-"`
+	parentKey *datastore.Key `json:"-",datastore:"-"`
 }
 
 // HasKey returns true in case the
@@ -30,6 +31,16 @@ func (this *Model) HasKey() bool {
 // Key returns the entity datastore key
 func (this *Model) Key() *datastore.Key {
 	return this.key
+}
+
+// ParentKey returns the entity's parent datastore key
+func (this *Model) Parent() *datastore.Key {
+	return this.parentKey
+}
+
+// SetParent sets the entity's parent key
+func (this *Model) SetParent(parent *datastore.Key) {
+	this.parentKey = parent
 }
 
 // UUID Returns the UUID representation of

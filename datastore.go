@@ -4,6 +4,7 @@ import (
 	"appengine"
 	"appengine/datastore"
 	"errors"
+	"reflect"
 )
 
 var (
@@ -12,11 +13,11 @@ var (
 )
 
 type entity interface {
-	Kind() string
 	HasKey() bool
 	Key() *datastore.Key
 	SetKey(*datastore.Key)
-	NewKey(appengine.Context) *datastore.Key
+	Parent() *datastore.Key
+	SetParent(*datastore.Key)
 	UUID() string
 	SetUUID(uuid string) error
 }
@@ -42,7 +43,7 @@ func (this Datastore) Create(e entity) error {
 		return ErrEntityExists
 	}
 
-	key, err := datastore.Put(this.Context, e.NewKey(this.Context), e);
+	key, err := datastore.Put(this.Context, this.NewKeyFor(e), e);
 	e.SetKey(key)
 	return err
 }
@@ -66,7 +67,7 @@ func (this Datastore) Update(e entity) error {
 // entity is found for the given key
 func (this Datastore) Load(e entity) error {
 	if !e.HasKey() {
-		e.SetKey(e.NewKey(this.Context))
+		e.SetKey(this.NewKeyFor(e))
 	}
 	err := datastore.Get(this.Context, e.Key(), e)
 	if err == datastore.ErrNoSuchEntity {
@@ -86,8 +87,50 @@ func (this Datastore) Delete(e entity) error {
 	}
 
 	if !e.HasKey() {
-		e.SetKey(e.NewKey(this.Context))
+		e.SetKey(this.NewKeyFor(e))
 	}
 
 	return datastore.Delete(this.Context, e.Key())
+}
+
+// NewKeyFor generates a new datastore key for the given entity
+//
+// The Key components are derived from the entity struct through reflection
+// Fields tagged with `db:"id"` are used in the key as a StringID if
+// the field type is string, or IntID in case its type is any int type
+//
+// In case multiple fields are tagged with `db:"id"`, the first field
+// is selected to be used as id in the key
+//
+// If no field is tagged, the key is generated using the default values
+// for StringID and IntID, causing the key to be auto generated
+func (this Datastore) NewKeyFor(e entity) *datastore.Key {
+	kind := reflect.TypeOf(e).Elem().Name()
+	stringID, intID := this.extractIDs(e)
+	parentKey := e.Parent()
+	return datastore.NewKey(this.Context, kind, stringID, intID, parentKey)
+}
+
+func (this Datastore) extractIDs(e entity) (string, int64) {
+	elem := reflect.TypeOf(e).Elem()
+	elemValue := reflect.ValueOf(e).Elem()
+
+	for i := 0; i < elem.NumField(); i++ {
+		field := elem.Field(i)
+		tag := field.Tag.Get("db")
+		value := elemValue.Field(i)
+		if tag == "id" {
+			switch field.Type.Kind() {
+				case reflect.String: return value.String(), 0
+				case reflect.Int,
+					reflect.Int8,
+					reflect.Int16,
+					reflect.Int32,
+					reflect.Int64: return "", value.Int()
+			}
+		}
+	}
+
+	// Default key values for auto generated keys
+	return "", 0
 }
