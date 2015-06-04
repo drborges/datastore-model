@@ -81,8 +81,8 @@ func (this Datastore) Load(e entity) error {
 // key provided does not match any existent
 // entity
 func (this Datastore) Delete(e entity) error {
-	if err := this.Load(e); err == datastore.ErrNoSuchEntity {
-		return ErrNoSuchEntity
+	if err := this.Load(e); err != nil {
+		return err
 	}
 
 	if !e.HasKey() {
