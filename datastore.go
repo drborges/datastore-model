@@ -15,7 +15,7 @@ type entity interface {
 	Kind() string
 	HasKey() bool
 	Key() *datastore.Key
-	setKey(*datastore.Key)
+	SetKey(*datastore.Key)
 	NewKey(appengine.Context) *datastore.Key
 	UUID() string
 	SetUUID(uuid string) error
@@ -43,7 +43,7 @@ func (this Datastore) Create(e entity) error {
 	}
 
 	key, err := datastore.Put(this.Context, e.NewKey(this.Context), e);
-	e.setKey(key)
+	e.SetKey(key)
 	return err
 }
 
@@ -66,7 +66,7 @@ func (this Datastore) Update(e entity) error {
 // entity is found for the given key
 func (this Datastore) Load(e entity) error {
 	if !e.HasKey() {
-		e.setKey(e.NewKey(this.Context))
+		e.SetKey(e.NewKey(this.Context))
 	}
 	err := datastore.Get(this.Context, e.Key(), e)
 	if err == datastore.ErrNoSuchEntity {
@@ -86,7 +86,7 @@ func (this Datastore) Delete(e entity) error {
 	}
 
 	if !e.HasKey() {
-		e.setKey(e.NewKey(this.Context))
+		e.SetKey(e.NewKey(this.Context))
 	}
 
 	return datastore.Delete(this.Context, e.Key())

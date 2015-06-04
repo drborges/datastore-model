@@ -54,6 +54,7 @@ func (this *Model) SetUUID(uuid string) error {
 	return err
 }
 
-func (this *Model) setKey(k *datastore.Key) {
+// SetKey sets the entity datastore Key
+func (this *Model) SetKey(k *datastore.Key) {
 	this.key = k
 }
