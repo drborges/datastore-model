@@ -28,14 +28,23 @@ type entity interface {
 	SetKeyFromUUID(uuid string) error
 }
 
+type Clock func() time.Time
+
 // Datastore Service that provides a set of
 // operations to make it easy on you when
 // working with appengine datastore
 //
 // It works along with db.Model in order to
 // provide its features.
+//
+// TODO come up with better naming
 type Datastore struct {
 	Context appengine.Context
+	Clock Clock
+}
+
+func NewDatastore(c appengine.Context) Datastore {
+	return Datastore{c, time.Now}
 }
 
 // Create creates a new entity in datastore
@@ -49,7 +58,7 @@ func (this Datastore) Create(e entity) error {
 		return ErrEntityExists
 	}
 
-	e.SetCreatedAt(time.Now())
+	e.SetCreatedAt(this.Clock())
 	key, err := datastore.Put(this.Context, this.NewKeyFor(e), e)
 	e.SetKey(key)
 	return err
