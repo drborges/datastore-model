@@ -45,20 +45,20 @@ func (this *Entity) SetParent(parent *datastore.Key) {
 	this.parentKey = parent
 }
 
-// UUID Returns the UUID representation of
+// KeyAsUUID Returns the UUID representation of
 // the entity's datastore key
 //
 // An empty string is returned in case
 // the current key is invalid
-func (this *Entity) UUID() string {
+func (this *Entity) KeyAsUUID() string {
 	return this.key.Encode()
 }
 
-// SetUUID assigns a datastore key to the entity
+// SetKeyFromUUID assigns a datastore key to the entity
 // based on the given UUID
 //
 // Currently the UUID is the encoded datastore key
-func (this *Entity) SetUUID(uuid string) error {
+func (this *Entity) SetKeyFromUUID(uuid string) error {
 	key, err := datastore.DecodeKey(uuid)
 	if err != nil {
 		return ErrInvalidUUID

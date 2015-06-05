@@ -22,8 +22,8 @@ type entity interface {
 	SetKey(*datastore.Key)
 	Parent() *datastore.Key
 	SetParent(*datastore.Key)
-	UUID() string
-	SetUUID(uuid string) error
+	KeyAsUUID() string
+	SetKeyFromUUID(uuid string) error
 }
 
 // Datastore Service that provides a set of
