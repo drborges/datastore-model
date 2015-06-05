@@ -1,38 +1,39 @@
 package db_test
 
 import (
-	"appengine/datastore"
 	"github.com/drborges/datastore-model"
 )
 
-type Persons []EntityWithStringID
-
-func (this Persons) ByCountry(country string) *datastore.Query {
-	return datastore.NewQuery("Person").Filter("Country=", country)
-}
-
 type EntityWithStringID struct {
-	db.Model
+	db.Entity
 	StringID string `db:"id"`
 }
 
 type EntityWithIntID struct {
-	db.Model
+	db.Entity
 	IntID int `db:"id"`
 }
 
 type EntityWithNoIDTag struct {
-	db.Model
+	db.Entity
 	StringField        string
 	AnotherStringField string
 }
 
 type EntityWithMultipleIDTags struct {
-	db.Model
+	db.Entity
 	IntID    int64  `db:"id"`
 	StringID string `db:"id"`
 }
 
 type Person struct {
-	db.Model `db:"People"`
+	db.Entity `db:"People"`
+	Name, Country string
 }
+
+type People []*Person
+
+func (this People) ByCountry(country string) *db.Query {
+	return db.QueryFor(new(Person)).Filter("Country=", country)
+}
+

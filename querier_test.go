@@ -6,30 +6,29 @@ import (
 	"testing"
 )
 
-type Tags []*EntityWithStringID
-
 var (
-	golang    = NewEntity("golang")
-	appengine = NewEntity("appengine")
-	tags      = Tags{golang, appengine}
+	diego = NewPerson("Diego", "Brazil")
+	munjal = NewPerson("Munjal", "USA")
+	people = People{diego, munjal}
 )
 
-func NewEntity(id string) *EntityWithStringID {
-	entity := new(EntityWithStringID)
-	entity.StringID = id
-	return entity
+func NewPerson(name, country string) *Person {
+	person := new(Person)
+	person.Name = name
+	person.Country = country
+	return person
 }
 
 func TestQuerierEntityAtSlicePtr(t *testing.T) {
-	entity := db.EntityAt(&tags, 1)
+	entity := db.EntityAt(&people, 1)
 
 	expect := goexpect.New(t)
-	expect(entity).ToBe(appengine)
+	expect(entity).ToBe(munjal)
 }
 
 func TestQuerierEntityAtSlice(t *testing.T) {
-	entity := db.EntityAt(tags, 0)
+	entity := db.EntityAt(people, 0)
 
 	expect := goexpect.New(t)
-	expect(entity).ToBe(golang)
+	expect(entity).ToBe(diego)
 }

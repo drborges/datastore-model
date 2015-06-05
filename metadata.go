@@ -67,7 +67,7 @@ func ExtractEntityKind(e entity) string {
 	elem := reflect.TypeOf(e).Elem()
 	for i := 0; i < elem.NumField(); i++ {
 		field := elem.Field(i)
-		if field.Type.Name() == reflect.TypeOf(Model{}).Name() {
+		if field.Type.Name() == reflect.TypeOf(Entity{}).Name() {
 			if kind := field.Tag.Get("db"); kind != "" {
 				return kind
 			}
