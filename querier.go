@@ -24,6 +24,17 @@ func (this Querier) All(slice interface{}) error {
 	return nil
 }
 
+func (this Querier) First(entity entity) error {
+	i := this.q.Run(this.c)
+	key, err := i.Next(entity)
+	if err != nil {
+		return err
+	}
+
+	entity.SetKey(key)
+	return nil
+}
+
 func EntityAt(slice interface{}, i int) entity {
 	s := reflect.ValueOf(slice)
 
