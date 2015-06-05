@@ -4,6 +4,7 @@ import (
 	"appengine"
 	"appengine/datastore"
 	"errors"
+	"time"
 )
 
 var (
@@ -22,6 +23,7 @@ type entity interface {
 	SetKey(*datastore.Key)
 	Parent() *datastore.Key
 	SetParent(*datastore.Key)
+	SetCreatedAt(time.Time)
 	KeyAsUUID() string
 	SetKeyFromUUID(uuid string) error
 }
@@ -47,6 +49,7 @@ func (this Datastore) Create(e entity) error {
 		return ErrEntityExists
 	}
 
+	e.SetCreatedAt(time.Now())
 	key, err := datastore.Put(this.Context, this.NewKeyFor(e), e)
 	e.SetKey(key)
 	return err

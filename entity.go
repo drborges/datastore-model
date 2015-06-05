@@ -3,6 +3,7 @@ package db
 import (
 	"appengine/datastore"
 	"errors"
+	"time"
 )
 
 var (
@@ -17,8 +18,9 @@ var (
 // it to be used as an entity type in
 // Datastore service
 type Entity struct {
-	key       *datastore.Key `json:"-",datastore:"-"`
-	parentKey *datastore.Key `json:"-",datastore:"-"`
+	key       *datastore.Key `json:"-" datastore:"-"`
+	parentKey *datastore.Key `json:"-" datastore:"-"`
+	CreatedAt time.Time      `json:"-" datastore:",noindex"`
 }
 
 // HasKey returns true in case the
@@ -43,6 +45,10 @@ func (this *Entity) Parent() *datastore.Key {
 // SetParent sets the entity's parent key
 func (this *Entity) SetParent(parent *datastore.Key) {
 	this.parentKey = parent
+}
+
+func (this *Entity) SetCreatedAt(t time.Time) {
+	this.CreatedAt = t
 }
 
 // KeyAsUUID Returns the UUID representation of

@@ -179,6 +179,7 @@ func TestDatastoreDeleteReturnsErrNoSuchEntity(t *testing.T) {
 }
 
 func TestQueryAllSetKeysToMatchedItems(t *testing.T) {
+	t.Parallel()
 	c, _ := aetest.NewContext(nil)
 	defer c.Close()
 
@@ -197,6 +198,7 @@ func TestQueryAllSetKeysToMatchedItems(t *testing.T) {
 }
 
 func TestQueryFirstSetKeysToMatchedItem(t *testing.T) {
+	t.Parallel()
 	c, _ := aetest.NewContext(nil)
 	defer c.Close()
 
