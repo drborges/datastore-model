@@ -8,6 +8,7 @@ import (
 
 var (
 	diego  = NewPerson("Diego", "Brazil")
+	bruno  = NewPerson("Bruno", "Brazil")
 	munjal = NewPerson("Munjal", "USA")
 	people = People{diego, munjal}
 )

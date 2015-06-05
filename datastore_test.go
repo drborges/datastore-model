@@ -177,3 +177,37 @@ func TestDatastoreDeleteReturnsErrNoSuchEntity(t *testing.T) {
 	expect := goexpect.New(t)
 	expect(err).ToBe(db.ErrNoSuchEntity)
 }
+
+func TestQueryAllSetKeysToMatchedItems(t *testing.T) {
+	c, _ := aetest.NewContext(nil)
+	defer c.Close()
+
+	d := db.Datastore{c}
+
+	CreatePeople(d, diego, munjal, bruno)
+
+	people := People{}
+	err := d.Query(people.ByCountry("Brazil")).All(&people)
+
+	expect := goexpect.New(t)
+	expect(err).ToBe(nil)
+	expect(len(people)).ToBe(2)
+	expect(people[0].Key().String()).ToBe(diego.Key().String())
+	expect(people[1].Key().String()).ToBe(bruno.Key().String())
+}
+
+func TestQueryFirstSetKeysToMatchedItem(t *testing.T) {
+	c, _ := aetest.NewContext(nil)
+	defer c.Close()
+
+	d := db.Datastore{c}
+
+	CreatePeople(d, diego, munjal, bruno)
+
+	person := new(Person)
+	err := d.Query(People{}.ByCountry("Brazil")).First(person)
+
+	expect := goexpect.New(t)
+	expect(err).ToBe(nil)
+	expect(person.Key().String()).ToBe(diego.Key().String())
+}
