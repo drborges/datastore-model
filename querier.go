@@ -44,14 +44,14 @@ func (this Querier) All(slice interface{}) error {
 //
 // datastore.Done is returned if there is no
 // matched item
-func (this Querier) First(entity entity) error {
+func (this Querier) First(e entity) error {
 	i := this.q.Run(this.c)
-	key, err := i.Next(entity)
+	key, err := i.Next(e)
 	if err != nil {
 		return err
 	}
 
-	entity.SetKey(key)
+	e.SetKey(key)
 	return nil
 }
 

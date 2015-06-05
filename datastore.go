@@ -17,6 +17,12 @@ var (
 	ErrEntityExists = errors.New("Entity already exists")
 )
 
+type resource interface {
+//	Url() string
+	StringId() string
+	SetStringId(string) error
+}
+
 type entity interface {
 	HasKey() bool
 	Key() *datastore.Key
@@ -24,8 +30,11 @@ type entity interface {
 	Parent() *datastore.Key
 	SetParent(*datastore.Key)
 	SetCreatedAt(time.Time)
-	KeyAsUUID() string
-	SetKeyFromUUID(uuid string) error
+}
+
+type model interface {
+	entity
+	resource
 }
 
 type Clock func() time.Time

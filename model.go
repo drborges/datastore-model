@@ -7,9 +7,9 @@ import (
 )
 
 var (
-	// ErrInvalidUUID returned if an invalid
-	// UUID is passed to SetUUID
-	ErrInvalidUUID = errors.New("Invalid UUID")
+	// ErrInvalidStringId returned if an invalid string id
+	// is passed to SetStringId
+	ErrInvalidStringId = errors.New("Invalid StringId")
 )
 
 // Model represents a datastore entity
@@ -17,7 +17,7 @@ var (
 // Embedding this type to a struct allows
 // it to be used as an entity type in
 // Datastore service
-type Entity struct {
+type Model struct {
 	key       *datastore.Key `json:"-" datastore:"-"`
 	parentKey *datastore.Key `json:"-" datastore:"-"`
 	CreatedAt time.Time      `json:"-" datastore:",noindex"`
@@ -28,52 +28,50 @@ type Entity struct {
 // datastore key assigned to it
 //
 // Returns false otherwise
-func (this *Entity) HasKey() bool {
+func (this *Model) HasKey() bool {
 	return this.key != nil
 }
 
 // Key returns the entity datastore key
-func (this *Entity) Key() *datastore.Key {
+func (this *Model) Key() *datastore.Key {
 	return this.key
 }
 
 // ParentKey returns the entity's parent datastore key
-func (this *Entity) Parent() *datastore.Key {
+func (this *Model) Parent() *datastore.Key {
 	return this.parentKey
 }
 
 // SetParent sets the entity's parent key
-func (this *Entity) SetParent(parent *datastore.Key) {
+func (this *Model) SetParent(parent *datastore.Key) {
 	this.parentKey = parent
 }
 
-func (this *Entity) SetCreatedAt(t time.Time) {
+// SetCreatedAt sets the entity creation time
+func (this *Model) SetCreatedAt(t time.Time) {
 	this.CreatedAt = t
 }
 
-// KeyAsUUID Returns the UUID representation of
-// the entity's datastore key
+// StringId Returns the string representation of the datastore key
 //
-// An empty string is returned in case
-// the current key is invalid
-func (this *Entity) KeyAsUUID() string {
+// An empty string is returned in case the key is invalid
+func (this *Model) StringId() string {
 	return this.key.Encode()
 }
 
-// SetKeyFromUUID assigns a datastore key to the entity
-// based on the given UUID
+// SetStringId decodes the give string into a datastore key
 //
-// Currently the UUID is the encoded datastore key
-func (this *Entity) SetKeyFromUUID(uuid string) error {
+// Currently the Id is the encoded datastore key
+func (this *Model) SetStringId(uuid string) error {
 	key, err := datastore.DecodeKey(uuid)
 	if err != nil {
-		return ErrInvalidUUID
+		return ErrInvalidStringId
 	}
 	this.key = key
 	return err
 }
 
 // SetKey sets the entity datastore Key
-func (this *Entity) SetKey(k *datastore.Key) {
+func (this *Model) SetKey(k *datastore.Key) {
 	this.key = k
 }

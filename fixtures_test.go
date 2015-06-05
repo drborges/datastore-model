@@ -6,29 +6,29 @@ import (
 )
 
 type EntityWithStringID struct {
-	db.Entity
+	db.Model
 	StringID string `db:"id"`
 }
 
 type EntityWithIntID struct {
-	db.Entity
+	db.Model
 	IntID int `db:"id"`
 }
 
 type EntityWithNoIDTag struct {
-	db.Entity
+	db.Model
 	StringField        string
 	AnotherStringField string
 }
 
 type EntityWithMultipleIDTags struct {
-	db.Entity
+	db.Model
 	IntID    int64  `db:"id"`
 	StringID string `db:"id"`
 }
 
 type Person struct {
-	db.Entity     `db:"People"`
+	db.Model     `db:"People"`
 	Name, Country string
 }
 
