@@ -27,7 +27,7 @@ type EntityWithMultipleIDTags struct {
 }
 
 type Person struct {
-	db.Entity `db:"People"`
+	db.Entity     `db:"People"`
 	Name, Country string
 }
 

@@ -7,7 +7,7 @@ import (
 )
 
 var (
-	diego = NewPerson("Diego", "Brazil")
+	diego  = NewPerson("Diego", "Brazil")
 	munjal = NewPerson("Munjal", "USA")
 	people = People{diego, munjal}
 )
@@ -31,4 +31,15 @@ func TestQuerierEntityAtSlice(t *testing.T) {
 
 	expect := goexpect.New(t)
 	expect(entity).ToBe(diego)
+}
+
+func TestQuerierEntityAtPanicsWhenInvalidParameterIsProvided(t *testing.T) {
+	defer func () {
+		expect := goexpect.New(t)
+		err := recover()
+		expect(err).ToBe(db.ErrNotSlice)
+	}()
+
+	db.EntityAt(123, 0) // Should panic
+	panic("Should not reach here")
 }

@@ -3,6 +3,11 @@ package db
 import (
 	"appengine"
 	"reflect"
+	"errors"
+)
+
+var (
+	ErrNotSlice = errors.New("Querier.toEntitySlice given a non-slice type")
 )
 
 // Querier provides hight level query operations
@@ -66,5 +71,5 @@ func EntityAt(slice interface{}, i int) entity {
 		return s.Elem().Index(i).Interface().(entity)
 	}
 
-	panic("Querier.toEntitySlice given a non-slice type")
+	panic(ErrNotSlice)
 }
