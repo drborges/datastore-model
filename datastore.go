@@ -4,7 +4,6 @@ import (
 	"appengine"
 	"appengine/datastore"
 	"errors"
-	"reflect"
 )
 
 var (
@@ -114,34 +113,12 @@ func (this Datastore) Delete(e entity) error {
 // If no field is tagged, the key is generated using the default values
 // for StringID and IntID, causing the key to be auto generated
 func (this Datastore) NewKeyFor(e entity) *datastore.Key {
-	kind := reflect.TypeOf(e).Elem().Name()
-	stringID, intID := this.extractIDs(e)
-	parentKey := e.Parent()
-	return datastore.NewKey(this.Context, kind, stringID, intID, parentKey)
-}
-
-func (this Datastore) extractIDs(e entity) (string, int64) {
-	elem := reflect.TypeOf(e).Elem()
-	elemValue := reflect.ValueOf(e).Elem()
-
-	for i := 0; i < elem.NumField(); i++ {
-		field := elem.Field(i)
-		tag := field.Tag.Get("db")
-		value := elemValue.Field(i)
-		if tag == "id" {
-			switch field.Type.Kind() {
-			case reflect.String:
-				return value.String(), 0
-			case reflect.Int,
-				reflect.Int8,
-				reflect.Int16,
-				reflect.Int32,
-				reflect.Int64:
-				return "", value.Int()
-			}
-		}
-	}
-
-	// Default key values for auto generated keys
-	return "", 0
+	stringID, intID := ExtractEntityKeyIDs(e)
+	return datastore.NewKey(
+		this.Context,
+		ExtractEntityKind(e),
+		stringID,
+		intID,
+		e.Parent(),
+	)
 }
