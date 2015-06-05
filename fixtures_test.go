@@ -18,7 +18,7 @@ type EntityWithStringID struct {
 
 type EntityWithIntID struct {
 	db.Model
-	IntID    int `db:"id"`
+	IntID int `db:"id"`
 }
 
 type EntityWithNoIDTag struct {

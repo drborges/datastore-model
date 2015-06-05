@@ -9,9 +9,9 @@ import (
 type Tags []*EntityWithStringID
 
 var (
-	golang = NewEntity("golang")
+	golang    = NewEntity("golang")
 	appengine = NewEntity("appengine")
-	tags = Tags{golang, appengine}
+	tags      = Tags{golang, appengine}
 )
 
 func NewEntity(id string) *EntityWithStringID {
