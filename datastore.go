@@ -101,6 +101,11 @@ func (this Datastore) Delete(e entity) error {
 	return datastore.Delete(this.Context, e.Key())
 }
 
+// Query returns an instance of Querier
+func (this Datastore) Query(q *Query) *Querier {
+	return &Querier{this.Context, q}
+}
+
 // NewKeyFor generates a new datastore key for the given entity
 //
 // The Key components are derived from the entity struct through reflection
