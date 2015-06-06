@@ -2,12 +2,6 @@ package db
 
 import (
 	"reflect"
-	"errors"
-)
-
-var (
-	ErrMissingStringId = errors.New(`Entity is missing StringId. String field tagged with db:"id" cannot be empty.`)
-	ErrMissingIntId    = errors.New(`Entity is missing IntId. Integer field tagged with db:"id" cannot be zero.`)
 )
 
 // ExtractEntityKeyIDs extracts the StringID and IntID

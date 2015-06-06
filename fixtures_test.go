@@ -1,9 +1,9 @@
 package db_test
 
 import (
-	"time"
 	"appengine/datastore"
 	"github.com/drborges/datastore-model"
+	"time"
 )
 
 var (
@@ -36,9 +36,9 @@ type EntityWithMultipleIDTags struct {
 }
 
 type Person struct {
-	db.Model     `db:"People"`
-	Name string  `db:"id"`
-	Country string
+	db.Model `db:"People"`
+	Name     string `db:"id"`
+	Country  string
 }
 
 func NewPerson(name, country string) *Person {

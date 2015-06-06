@@ -2,11 +2,11 @@ package db_test
 
 import (
 	"appengine/aetest"
+	"appengine/datastore"
 	"github.com/drborges/datastore-model"
 	"github.com/drborges/goexpect"
 	"testing"
 	"time"
-	"appengine/datastore"
 )
 
 func TestDatastoreSetKeyForStringID(t *testing.T) {
@@ -117,7 +117,7 @@ func TestDatastoreCreate(t *testing.T) {
 	entity.StringID = "StringID"
 
 	createdAt := time.Now()
-	clock := func () time.Time { return createdAt }
+	clock := func() time.Time { return createdAt }
 
 	err := db.Datastore{c, clock}.Create(entity)
 

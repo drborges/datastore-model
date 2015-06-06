@@ -2,14 +2,7 @@ package db
 
 import (
 	"appengine/datastore"
-	"errors"
 	"time"
-)
-
-var (
-	// ErrInvalidStringId returned if an invalid string id
-	// is passed to SetStringId
-	ErrInvalidStringId = errors.New("Invalid StringId")
 )
 
 // Model represents a datastore entity

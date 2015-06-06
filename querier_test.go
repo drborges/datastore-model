@@ -24,10 +24,10 @@ func TestQuerierEntityAtSlice(t *testing.T) {
 
 func TestQuerierEntityAtPanicsWhenInvalidParameterIsProvided(t *testing.T) {
 	t.Parallel()
-	defer func () {
+	defer func() {
 		expect := goexpect.New(t)
 		err := recover()
-		expect(err).ToBe(db.ErrNotSlice)
+		expect(err).ToBe(db.ErrInvalidType)
 	}()
 
 	db.EntityAt(123, 0) // Should panic
