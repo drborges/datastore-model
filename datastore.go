@@ -64,6 +64,20 @@ func (this Datastore) Create(e entity) error {
 	return err
 }
 
+// CreateAll creates entities in batch
+func (this Datastore) CreateAll(es ...entity) error {
+	keys := make([]*datastore.Key, len(es))
+	for i, e := range es {
+		if err := this.AssignEntityKey(e); err != nil {
+			return err
+		}
+		keys[i] = e.Key()
+		e.SetCreatedAt(this.Clock())
+	}
+	_, err := datastore.PutMulti(this.context, keys, es)
+	return err
+}
+
 // Update updated an entity in datastore
 func (this Datastore) Update(e entity) error {
 	if err := this.ResolveEntityKey(e); err != nil {

@@ -130,6 +130,31 @@ func TestDatastoreCreateDoesNotUpdateCreatedAtIfError(t *testing.T) {
 	expect(entity.Key()).ToBe((*datastore.Key)(nil))
 }
 
+func TestDatastoreCreateAll(t *testing.T) {
+	t.Parallel()
+	c, _ := aetest.NewContext(nil)
+	defer c.Close()
+
+	createdAt := time.Now()
+	createdAtFormatted := createdAt.Format("02 Jan 06 15:04 MST")
+	clock := func() time.Time { return createdAt }
+
+	d := db.NewDatastore(c)
+	d.Clock = clock
+	err := d.CreateAll(diego, bruno, munjal)
+
+	expect := goexpect.New(t)
+	expect(err).ToBe(nil)
+	expect(diego.CreatedAt.Format("02 Jan 06 15:04 MST")).ToBe(createdAtFormatted)
+	expect(diego.Key().String()).ToBe("/People,Diego")
+
+	expect(bruno.CreatedAt.Format("02 Jan 06 15:04 MST")).ToBe(createdAtFormatted)
+	expect(bruno.Key().String()).ToBe("/People,Bruno")
+
+	expect(munjal.CreatedAt.Format("02 Jan 06 15:04 MST")).ToBe(createdAtFormatted)
+	expect(munjal.Key().String()).ToBe("/People,Munjal")
+}
+
 func TestDatastoreLoad(t *testing.T) {
 	t.Parallel()
 	c, _ := aetest.NewContext(nil)
