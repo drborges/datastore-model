@@ -6,21 +6,8 @@ import (
 	"testing"
 )
 
-var (
-	diego  = NewPerson("Diego", "Brazil")
-	bruno  = NewPerson("Bruno", "Brazil")
-	munjal = NewPerson("Munjal", "USA")
-	people = People{diego, munjal}
-)
-
-func NewPerson(name, country string) *Person {
-	person := new(Person)
-	person.Name = name
-	person.Country = country
-	return person
-}
-
 func TestQuerierEntityAtSlicePtr(t *testing.T) {
+	t.Parallel()
 	entity := db.EntityAt(&people, 1)
 
 	expect := goexpect.New(t)
@@ -28,6 +15,7 @@ func TestQuerierEntityAtSlicePtr(t *testing.T) {
 }
 
 func TestQuerierEntityAtSlice(t *testing.T) {
+	t.Parallel()
 	entity := db.EntityAt(people, 0)
 
 	expect := goexpect.New(t)
@@ -35,6 +23,7 @@ func TestQuerierEntityAtSlice(t *testing.T) {
 }
 
 func TestQuerierEntityAtPanicsWhenInvalidParameterIsProvided(t *testing.T) {
+	t.Parallel()
 	defer func () {
 		expect := goexpect.New(t)
 		err := recover()

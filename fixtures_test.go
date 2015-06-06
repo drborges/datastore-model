@@ -1,8 +1,16 @@
 package db_test
 
 import (
-	"github.com/drborges/datastore-model"
 	"time"
+	"appengine/datastore"
+	"github.com/drborges/datastore-model"
+)
+
+var (
+	diego  = NewPerson("Diego", "Brazil")
+	bruno  = NewPerson("Bruno", "Brazil")
+	munjal = NewPerson("Munjal", "USA")
+	people = People{diego, munjal}
 )
 
 type EntityWithStringID struct {
@@ -29,7 +37,15 @@ type EntityWithMultipleIDTags struct {
 
 type Person struct {
 	db.Model     `db:"People"`
-	Name, Country string
+	Name string  `db:"id"`
+	Country string
+}
+
+func NewPerson(name, country string) *Person {
+	person := new(Person)
+	person.Name = name
+	person.Country = country
+	return person
 }
 
 type People []*Person
@@ -39,10 +55,13 @@ func (this People) ByCountry(country string) *db.Query {
 }
 
 func CreatePeople(d db.Datastore, people ...*Person) {
-	for _, person := range people {
-		d.Create(person)
+	keys := make([]*datastore.Key, len(people))
+	for i, person := range people {
+		d.SetKeyFor(person)
+		keys[i] = person.Key()
 	}
+	datastore.PutMulti(d.Context, keys, people)
 	// Gives datastore some time to index the data
 	// and make it available for queries
-	time.Sleep(1 * time.Second)
+	time.Sleep(2 * time.Second)
 }

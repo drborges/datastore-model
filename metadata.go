@@ -2,6 +2,12 @@ package db
 
 import (
 	"reflect"
+	"errors"
+)
+
+var (
+	ErrMissingStringId = errors.New(`Entity is missing StringId. String field tagged with db:"id" cannot be empty.`)
+	ErrMissingIntId    = errors.New(`Entity is missing IntId. Integer field tagged with db:"id" cannot be zero.`)
 )
 
 // ExtractEntityKeyIDs extracts the StringID and IntID
@@ -27,7 +33,7 @@ import (
 //
 // If multiple id tags are used on a struct fields
 // only the first tag from top to bottom is considered
-func ExtractEntityKeyIDs(e entity) (string, int64) {
+func ExtractEntityKeyIDs(e entity) (string, int64, error) {
 	elem := reflect.TypeOf(e).Elem()
 	elemValue := reflect.ValueOf(e).Elem()
 
@@ -38,19 +44,27 @@ func ExtractEntityKeyIDs(e entity) (string, int64) {
 		if tag == "id" {
 			switch field.Type.Kind() {
 			case reflect.String:
-				return value.String(), 0
+				v := value.String()
+				if v == "" {
+					return "", 0, ErrMissingStringId
+				}
+				return value.String(), 0, nil
 			case reflect.Int,
 				reflect.Int8,
 				reflect.Int16,
 				reflect.Int32,
 				reflect.Int64:
-				return "", value.Int()
+				v := value.Int()
+				if v == 0 {
+					return "", 0, ErrMissingIntId
+				}
+				return "", v, nil
 			}
 		}
 	}
 
 	// Default key values for auto generated keys
-	return "", 0
+	return "", 0, nil
 }
 
 // ExtractEntityKind extracts entity kind from struct tag
