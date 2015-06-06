@@ -57,7 +57,7 @@ func (this People) ByCountry(country string) *db.Query {
 func CreatePeople(d db.Datastore, people ...*Person) {
 	keys := make([]*datastore.Key, len(people))
 	for i, person := range people {
-		d.SetKeyFor(person)
+		d.SetNewKey(person)
 		keys[i] = person.Key()
 	}
 	datastore.PutMulti(d.Context, keys, people)
