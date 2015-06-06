@@ -2,6 +2,7 @@ package db
 
 import (
 	"reflect"
+	"strings"
 )
 
 // ExtractEntityKeyIDs extracts the StringID and IntID
@@ -61,7 +62,7 @@ func ExtractEntityKeyIDs(e entity) (string, int64, error) {
 	return "", 0, nil
 }
 
-// ExtractEntityKind extracts entity kind from struct tag
+// ExtractEntityKindMetadata extracts entity kind from struct tag
 // applied to db.Model field
 //
 // e.g.:
@@ -71,16 +72,27 @@ func ExtractEntityKeyIDs(e entity) (string, int64, error) {
 //   Name     string
 // }
 //
-func ExtractEntityKind(e entity) string {
+// Returns the entity kind and whether the entity has parent key
+//
+// TODO refactor the logic below
+func ExtractEntityKindMetadata(e entity) (string, bool) {
+	hasParent := false
 	elem := reflect.TypeOf(e).Elem()
 	for i := 0; i < elem.NumField(); i++ {
 		field := elem.Field(i)
 		if field.Type.Name() == reflect.TypeOf(Model{}).Name() {
-			if kind := field.Tag.Get("db"); kind != "" {
-				return kind
+			if kindMetadata := field.Tag.Get("db"); kindMetadata != "" {
+				values := strings.Split(kindMetadata, ",")
+				kind := values[0]
+				if len(values) > 1 {
+					if strings.TrimSpace(values[1]) == "hasparent" {
+						hasParent = true
+					}
+				}
+				return kind, hasParent
 			}
 		}
 	}
 
-	return elem.Name()
+	return elem.Name(), hasParent
 }

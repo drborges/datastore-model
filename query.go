@@ -3,7 +3,7 @@ package db
 import "appengine/datastore"
 
 func QueryFor(e entity) *Query {
-	kind := ExtractEntityKind(e)
+	kind, _ := ExtractEntityKindMetadata(e)
 	return &Query{datastore.NewQuery(kind)}
 }
 

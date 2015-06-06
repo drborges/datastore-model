@@ -37,9 +37,14 @@ type EntityWithMultipleIDTags struct {
 }
 
 type Person struct {
-	db.Model `db:"People"`
+	db.Model        `db:"People"`
 	Name     string `db:"id"`
 	Country  string
+}
+
+type Message struct {
+	db.Model        `db:"Messages,hasparent"`
+	Content string
 }
 
 func NewPerson(name, country string) *Person {
@@ -47,6 +52,12 @@ func NewPerson(name, country string) *Person {
 	person.Name = name
 	person.Country = country
 	return person
+}
+
+func NewMessage(content string) *Message {
+	message := new(Message)
+	message.Content = content
+	return message
 }
 
 type People []*Person

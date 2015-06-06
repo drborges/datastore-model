@@ -63,16 +63,27 @@ func TestExtractIDsReturnsErrMissingIntId(t *testing.T) {
 
 func TestExtractEntityKindReturnsKindFromTag(t *testing.T) {
 	t.Parallel()
-	kind := db.ExtractEntityKind(&Person{})
+	kind, hasParent := db.ExtractEntityKindMetadata(&Person{})
 
 	expect := goexpect.New(t)
 	expect(kind).ToBe("People")
+	expect(hasParent).ToBe(false)
 }
 
 func TestExtractEntityKindReturnsStructNameAsKind(t *testing.T) {
 	t.Parallel()
-	kind := db.ExtractEntityKind(&EntityWithStringID{})
+	kind, hasParent := db.ExtractEntityKindMetadata(&EntityWithStringID{})
 
 	expect := goexpect.New(t)
 	expect(kind).ToBe("EntityWithStringID")
+	expect(hasParent).ToBe(false)
+}
+
+func TestExtractEntityKindMetadataForEntityWithParentKey(t *testing.T) {
+	t.Parallel()
+	kind, hasParent := db.ExtractEntityKindMetadata(&Message{})
+
+	expect := goexpect.New(t)
+	expect(kind).ToBe("Messages")
+	expect(hasParent).ToBe(true)
 }
