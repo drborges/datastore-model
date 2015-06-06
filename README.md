@@ -8,16 +8,16 @@ Experimental somewhat ORM library for working with appengine `datastore`.
 $ go get -u github.com/drborges/datastore-model
 ```
 
-# Usage: Entity
+# Usage
 
 #### Simple Example
 
-Embed `db.Entity` to your model to add `db.Datastore` support:
+Embed `db.Model` to your model to add `db.Datastore` support:
 
 ```go
 type Tag struct {
-	db.Entity
-	Name string
+	db.Model
+	Name  string
 	Owner string
 }
 ```
@@ -33,43 +33,47 @@ Struct `tags` are available to override the behavior above.
 
 #### Overriding Datastore Entity Kind
 
-Just tag the embedded type `db.Entity` with `db:"MyEntityKind"`, like so: 
+Just tag the embedded type `db.Model` with `db:"Tags"`, like so: 
 
 ```go
 type Tag struct {
-	db.Entity    `db:"Tags"`
+	db.Model    `db:"Tags"`
 	Name  string
 	Owner string
 }
 ```
 
+The key kind will be extracted from the tag, and the resulting key will look like:
+
+```go
+datastore.NewKey(context, "Tags", "", 0, nil)
+```
+
 #### Overriding Entity Key Generation
 
-Just tag either a string or an integer field with `db:"id"` and `db.Datastore` will use it in the key creation
+By tagging either a string or an integer field with `db:"id"`, `db.Datastore` will use it to create the entity's key.
 
 ```go
 type Tag struct {
-	db.Entity    `db:"Tags"`
+	db.Model     `db:"Tags"`
 	Name  string `db:"id"`
 	Owner string
 }
 ```
 
-# Usage: Datastore
+# Datastore Operations
 
-Datastore is a essentially an extension of appengine's datastore which brings some handy features to you.
-
-For more detailed info on the behavior of the following operations, check the godocs.
-
-Consider the model below for the next examples.
+Consider the model below for the following examples.
 
 ```go
 type Tag struct {
-	db.Entity    `db:"Tags"`
-	Name string  `json:"name" db:"id"`
-	Owner string `json:"owner"`
+	db.Model     `db:"Tags"`
+	Name string  `db:"id"`
+	Owner string
 }
 
+// This is a convenient way to group
+// queries for a given entity
 type Tags []*Tag
 
 func (this Tags) ByOwner(owner string) *db.Query {
@@ -89,6 +93,24 @@ tag.Owner = "Borges"
 err := db.NewDatastore(context).Create(tag)
 ```
 
+Upon success the given entity has its key assigned to it, allowing you to access it by `tag.Key()`.
+
+#### Datastore.CreateAll
+
+The following code creates multiple entities `Tag` in a single batch:
+
+```go
+golang := new(Tag)
+golang.Name = "golang"
+
+appengine := new(Tag)
+appengine.Name = "appengine"
+
+err := db.NewDatastore(context).CreateAll(golang, appengine)
+```
+
+All created entities will have their respective keys assigned to the items in the resulting list.
+
 #### Datastore.Load
 
 The following code loads data from datastore into a `Tag`:
@@ -98,6 +120,7 @@ tag := new(Tag)
 tag.Name = "golang"
 
 err := db.NewDatastore(context).Load(tag)
+// tag.Owner is populated with data
 ```
 
 #### Datastore.Delete
@@ -111,6 +134,13 @@ tag.Name = "golang"
 err := db.NewDatastore(context).Delete(tag)
 ```
 
+#### Datastore.DeleteAll
+
+The following code deletes multiple entities from datastore in a single batch:
+
+```go
+err := db.NewDatastore(context).DeleteAll(tag1, tag2)
+```
 #### Datastore.Query(q).All
 
 The following code runs a given query and maps the matched items to a list of entities, setting their keys behind the seems.
@@ -120,6 +150,8 @@ tags := Tags{}
 err := db.NewDatastore(context).Query(tags.ByOwner(owner)).All(&tags)
 ```
 
+For any given `tag` in the `tags` slice, one can access its key through `tag.Key()`
+
 #### Datastore.Query(q).First
 
 The following code runs a given query and loads the first item into the given entity instance.
@@ -128,3 +160,7 @@ The following code runs a given query and loads the first item into the given en
 tag := new(Tag)
 err := db.NewDatastore(context).Query(Tags{}.ByOwner(owner)).First(tag)
 ```
+
+# Future Work
+
+This is a very experimental project and there is a lot that can be done (struct tags for entities with parent keys, iterator queries for instance...). This current work is essentially driven by BearchInc's use cases, though it is not restricted to them. Feel free to suggest and contribute.
