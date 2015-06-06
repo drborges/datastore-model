@@ -4,6 +4,7 @@ import (
 	"appengine/datastore"
 	"github.com/drborges/datastore-model"
 	"time"
+	"appengine"
 )
 
 var (
@@ -54,13 +55,13 @@ func (this People) ByCountry(country string) *db.Query {
 	return db.QueryFor(new(Person)).Filter("Country=", country)
 }
 
-func CreatePeople(d db.Datastore, people ...*Person) {
+func CreatePeople(d db.Datastore, c appengine.Context, people ...*Person) {
 	keys := make([]*datastore.Key, len(people))
 	for i, person := range people {
-		d.SetNewKey(person)
+		d.AssignEntityKey(person)
 		keys[i] = person.Key()
 	}
-	datastore.PutMulti(d.Context, keys, people)
+	datastore.PutMulti(c, keys, people)
 	// Gives datastore some time to index the data
 	// and make it available for queries
 	time.Sleep(2 * time.Second)
