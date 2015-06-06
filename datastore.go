@@ -103,6 +103,17 @@ func (this Datastore) Delete(e entity) error {
 	return datastore.Delete(this.context, e.Key())
 }
 
+func (this Datastore) DeleteAll(es ...entity) error {
+	keys := make([]*datastore.Key, len(es))
+	for i, e := range es {
+		if err := this.AssignEntityKey(e); err != nil {
+			return err
+		}
+		keys[i] = e.Key()
+	}
+	return datastore.DeleteMulti(this.context, keys)
+}
+
 // Query returns an instance of Querier
 func (this Datastore) Query(q *Query) *Querier {
 	return &Querier{this.context, q}
