@@ -28,12 +28,13 @@ type model interface {
 	resource
 }
 
-//
-type Database interface {
+type Datasource interface {
 	Create(entity) error
+	CreateAll(...entity) error
 	Update(entity) error
 	Load(entity) error
 	Delete(entity) error
+	DeleteAll(...entity) error
 	Query(*Query) *Querier
 }
 
