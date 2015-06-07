@@ -75,6 +75,10 @@ func (this Datastore) CreateAll(es ...entity) error {
 	keys := make([]*datastore.Key, len(es))
 	for i, e := range es {
 		if err := this.AssignNewKey(e); err != nil {
+			for j := i; j >= 0; j-- {
+				es[j].SetKey((*datastore.Key)(nil))
+				es[j].SetCreatedAt(time.Time{})
+			}
 			return err
 		}
 		keys[i] = e.Key()
@@ -112,7 +116,7 @@ func (this Datastore) Delete(e entity) error {
 func (this Datastore) DeleteAll(es ...entity) error {
 	keys := make([]*datastore.Key, len(es))
 	for i, e := range es {
-		if err := this.AssignNewKey(e); err != nil {
+		if err := this.ResolveEntityKey(e); err != nil {
 			return err
 		}
 		keys[i] = e.Key()

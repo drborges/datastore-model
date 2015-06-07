@@ -45,17 +45,12 @@ func TestDatastoreCreateDoesNotUpdateCreatedAtIfError(t *testing.T) {
 	c, _ := aetest.NewContext(nil)
 	defer c.Close()
 
-	createdAt := time.Now()
-	clock := func() time.Time { return createdAt }
-
 	card := new(CreditCard)
-	d := db.NewDatastore(c)
-	d.Clock = clock
-	err := d.Create(card)
+	err := db.NewDatastore(c).Create(card)
 
 	expect := goexpect.New(t)
 	expect(err).ToBe(db.ErrMissingIntId)
-	expect(card.CreatedAt.Format("02 Jan 06 15:04 MST")).ToNotBe(createdAt.Format("02 Jan 06 15:04 MST"))
+	expect(card.CreatedAt).ToBe(time.Time{})
 	expect(card.Key()).ToBe((*datastore.Key)(nil))
 }
 
@@ -82,6 +77,25 @@ func TestDatastoreCreateAll(t *testing.T) {
 
 	expect(card2.CreatedAt.Format("02 Jan 06 15:04 MST")).ToBe(createdAtFormatted)
 	expect(card2.Key().String()).ToBe("/CreditCard,2")
+}
+
+func TestDatastoreCreateAllRollsBackAnyChangesToEntitiesWhenReturningError(t *testing.T) {
+	t.Parallel()
+	c, _ := aetest.NewContext(nil)
+	defer c.Close()
+
+	card1 := &CreditCard{Number:1}
+	card2 := &CreditCard{}
+
+	err := db.NewDatastore(c).CreateAll(card1, card2)
+
+	expect := goexpect.New(t)
+	expect(err).ToNotBe(nil)
+	expect(card1.CreatedAt).ToBe(time.Time{})
+	expect(card1.Key()).ToBe((*datastore.Key)(nil))
+
+	expect(card2.CreatedAt).ToBe(time.Time{})
+	expect(card2.Key()).ToBe((*datastore.Key)(nil))
 }
 
 func TestDatastoreLoad(t *testing.T) {
