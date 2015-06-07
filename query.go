@@ -2,7 +2,7 @@ package db
 
 import "appengine/datastore"
 
-func QueryFor(e entity) *Query {
+func From(e entity) *Query {
 	meta := KeyResolver{}
 	meta.ExtractKindMetadata(e)
 	return &Query{datastore.NewQuery(meta.Kind)}
