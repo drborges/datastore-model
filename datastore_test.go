@@ -79,7 +79,7 @@ func TestDatastoreCreateAll(t *testing.T) {
 	expect(card2.Key().String()).ToBe("/CreditCard,2")
 }
 
-func TestDatastoreCreateAllRollsBackAnyChangesToEntitiesWhenReturningError(t *testing.T) {
+func TestDatastoreCreateAllRollbackChangesToCreatedAtWhenReturningError(t *testing.T) {
 	t.Parallel()
 	c, _ := aetest.NewContext(nil)
 	defer c.Close()
@@ -92,7 +92,7 @@ func TestDatastoreCreateAllRollsBackAnyChangesToEntitiesWhenReturningError(t *te
 	expect := goexpect.New(t)
 	expect(err).ToNotBe(nil)
 	expect(card1.CreatedAt).ToBe(time.Time{})
-	expect(card1.Key()).ToBe((*datastore.Key)(nil))
+	expect(card1.Key().String()).ToBe("/CreditCard,1")
 
 	expect(card2.CreatedAt).ToBe(time.Time{})
 	expect(card2.Key()).ToBe((*datastore.Key)(nil))

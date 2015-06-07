@@ -75,8 +75,8 @@ func (this Datastore) CreateAll(es ...entity) error {
 	keys := make([]*datastore.Key, len(es))
 	for i, e := range es {
 		if err := this.AssignNewKey(e); err != nil {
+			// rollback changes to created at of previous entities
 			for j := i; j >= 0; j-- {
-				es[j].SetKey((*datastore.Key)(nil))
 				es[j].SetCreatedAt(time.Time{})
 			}
 			return err
