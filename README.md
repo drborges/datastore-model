@@ -77,7 +77,7 @@ type Tag struct {
 type Tags []*Tag
 
 func (this Tags) ByOwner(owner string) *db.Query {
-	return db.QueryFor(new(Tag)).Filter("Owner=", owner)
+	return db.From(new(Tag)).Filter("Owner=", owner)
 }
 ```
 

@@ -18,7 +18,7 @@ type CreditCard struct {
 type CreditCards []*CreditCard
 
 func (this CreditCards) ByOwner(owner string) *db.Query {
-	return db.QueryFor(new(CreditCard)).Filter("Owner=", owner)
+	return db.From(new(CreditCard)).Filter("Owner=", owner)
 }
 
 func TestDatastoreCreate(t *testing.T) {
