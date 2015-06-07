@@ -28,16 +28,6 @@ type model interface {
 	resource
 }
 
-type Datasource interface {
-	Create(entity) error
-	CreateAll(...entity) error
-	Update(entity) error
-	Load(entity) error
-	Delete(entity) error
-	DeleteAll(...entity) error
-	Query(*Query) *Querier
-}
-
 // Datastore Service that provides a set of
 // operations to make it easy on you when
 // working with appengine datastore
