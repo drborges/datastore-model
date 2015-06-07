@@ -129,6 +129,22 @@ func TestDatastoreUpdate(t *testing.T) {
 	expect(card.Key().String()).ToBe("/CreditCard,123")
 }
 
+func TestDatastoreUpdateAll(t *testing.T) {
+	t.Parallel()
+	c, _ := aetest.NewContext(nil)
+	defer c.Close()
+
+	card1 := &CreditCard{Number:1}
+	card2 := &CreditCard{Number:2}
+
+	err := db.NewDatastore(c).UpdateAll(card1, card2)
+
+	expect := goexpect.New(t)
+	expect(err).ToBe(nil)
+	expect(card1.Key().String()).ToBe("/CreditCard,1")
+	expect(card2.Key().String()).ToBe("/CreditCard,2")
+}
+
 // Won't test datastore behavior on deletes
 // See: https://groups.google.com/forum/#!topic/google-appengine-go/TIJEFI5gHxQ
 func TestDatastoreDelete(t *testing.T) {

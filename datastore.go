@@ -97,6 +97,18 @@ func (this Datastore) Update(e entity) error {
 	return err
 }
 
+func (this Datastore) UpdateAll(es ...entity) error {
+	keys := make([]*datastore.Key, len(es))
+	for i, e := range es {
+		if err := this.ResolveEntityKey(e); err != nil {
+			return err
+		}
+		keys[i] = e.Key()
+	}
+	_, err := datastore.PutMulti(this.context, keys, es)
+	return err
+}
+
 // Load loads entity data from datastore
 func (this Datastore) Load(e entity) error {
 	if err := this.ResolveEntityKey(e); err != nil {
