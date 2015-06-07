@@ -109,7 +109,34 @@ appengine.Name = "appengine"
 err := db.NewDatastore(context).CreateAll(golang, appengine)
 ```
 
-All created entities will have their respective keys assigned to the items in the resulting list.
+All created entities will have their respective keys assigned back to them upon success.
+
+#### Datastore.Update
+
+The following code updates a `Tag` in the `Tags` datastore entity:
+
+```go
+tag := new(Tag)
+tag.Name  = "golang"
+tag.Owner = "Borges"
+
+err := db.NewDatastore(context).Update(tag)
+```
+
+Upon success the given entity has its key assigned to it, allowing you to access it by `tag.Key()`.
+
+#### Datastore.UpdateAll
+
+The following code updates multiple entities `Tag` in a single batch:
+
+```go
+golang := &Tag{Name: "golang"}
+appengine := &Tag{Name: "appengine"}
+
+err := db.NewDatastore(context).UpdateAll(golang, appengine)
+```
+
+All entities have their keys set to themselves upon success.
 
 #### Datastore.Load
 
@@ -121,6 +148,17 @@ tag.Name = "golang"
 
 err := db.NewDatastore(context).Load(tag)
 // tag.Owner is populated with data
+```
+
+#### Datastore.LoadAll
+
+The following code loads data from datastore into a `Tag`:
+
+```go
+golang := &Tag{Name: "golang"}
+datastore := &Tag{Name: "datastore"}
+
+err := db.NewDatastore(context).LoadAll(golang, datastore)
 ```
 
 #### Datastore.Delete
@@ -135,6 +173,8 @@ err := db.NewDatastore(context).Delete(tag)
 ```
 
 #### Datastore.DeleteAll
+
+**Warning** This API is still experimental and lots of changes might and likely will occur :)
 
 The following code deletes multiple entities from datastore in a single batch:
 
@@ -161,6 +201,37 @@ tag := new(Tag)
 err := db.NewDatastore(context).Query(Tags{}.ByOwner(owner)).First(tag)
 ```
 
+# Memcached Datastore
+
+This is still another experiment. In order to reduce the hassle of implementing memcached operations on datastore we implemented `CachedDatastore` that abstracts that logic away.
+
+`CachedDatastore` embeds the regular `Datastore` type only overriding some of its operations in order to add support to `memcache`.
+
+Currently the operations supporting `memcache` are: `Load`, `Create`, `Update` and `Delete`.
+
+Be aware if you use `CachedDatastore` as your default datastore access interface, using any operation other than the ones mentioned above there will not be caching going on.
+
+
+#### Example:
+
+```go
+type MembershipCard struct {
+	db.Model
+	Number int   `db:"id"`
+	Owner  string
+}
+
+cds := db.CachedDatastore{db.NewDatastore(c)}
+
+card := &MembershipCard{Number: 1}
+cds.Create(card)
+
+cardFromCache := &MembershipCard{Number: 1}
+err := cds.Load(cardFromCache)
+```
+
+`CachedDatastore` uses the encoded entity's key (`card.StringId()`) as the memcache key. As of now there is no mechanism to override that behavior. 
+
 # Future Work
 
-This is a very experimental project and there is a lot that can be done (struct tags for entities with parent keys, iterator queries for instance...). This current work is essentially driven by BearchInc's use cases, though it is not restricted to them. Feel free to suggest and contribute.
+This is a very experimental project and there is a lot that can be done (iterator queries for instance...). This current work is essentially driven by BearchInc's use cases, though it is not restricted to them. Feel free to suggest and contribute.
