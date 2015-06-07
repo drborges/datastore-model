@@ -6,8 +6,20 @@ import (
 	"testing"
 )
 
+var (
+	diego  = &Person{Name:"Diego", Country:"Brazil"}
+	munjal = &Person{Name:"Munjal", Country:"USA"}
+)
+
+type Person struct {
+	db.Model        `db:"People"`
+	Name     string `db:"id"`
+	Country  string
+}
+
 func TestQuerierEntityAtSlicePtr(t *testing.T) {
 	t.Parallel()
+	people := []*Person{diego, munjal}
 	entity := db.EntityAt(&people, 1)
 
 	expect := goexpect.New(t)
@@ -16,6 +28,7 @@ func TestQuerierEntityAtSlicePtr(t *testing.T) {
 
 func TestQuerierEntityAtSlice(t *testing.T) {
 	t.Parallel()
+	people := []*Person{diego, munjal}
 	entity := db.EntityAt(people, 0)
 
 	expect := goexpect.New(t)

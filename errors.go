@@ -7,6 +7,5 @@ var (
 	ErrMissingParentKey        = errors.New(`Model marked with db:",hasparent" is missing parent key. Make sure you set it before attempting any datastore operation on the entity`)
 	ErrMissingStringId         = errors.New(`Entity is missing StringId. String field tagged with db:"id" cannot be empty`)
 	ErrMissingIntId            = errors.New(`Entity is missing IntId. Integer field tagged with db:"id" cannot be zero`)
-	ErrInvalidStringId         = errors.New("Invalid StringId")
 	ErrInvalidType             = errors.New("Invalid Type. Expected either a slice or a pointer to a slice")
 )

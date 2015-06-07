@@ -57,9 +57,6 @@ func (this *Model) StringId() string {
 // Currently the Id is the encoded datastore key
 func (this *Model) SetStringId(uuid string) error {
 	key, err := datastore.DecodeKey(uuid)
-	if err != nil {
-		return ErrInvalidStringId
-	}
 	this.key = key
 	return err
 }
