@@ -117,6 +117,17 @@ func (this Datastore) Load(e entity) error {
 	return datastore.Get(this.context, e.Key(), e)
 }
 
+func (this Datastore) LoadAll(es ...entity) error {
+	keys := make([]*datastore.Key, len(es))
+	for i, e := range es {
+		if err := this.ResolveEntityKey(e); err != nil {
+			return err
+		}
+		keys[i] = e.Key()
+	}
+	return datastore.GetMulti(this.context, keys, es)
+}
+
 // Delete deletes an entity from datastore
 func (this Datastore) Delete(e entity) error {
 	if err := this.ResolveEntityKey(e); err != nil {

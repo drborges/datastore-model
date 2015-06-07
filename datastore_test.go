@@ -116,6 +116,26 @@ func TestDatastoreLoad(t *testing.T) {
 	expect(card.Key().String()).ToBe("/CreditCard,1")
 }
 
+func TestDatastoreLoadAll(t *testing.T) {
+	t.Parallel()
+	c, _ := aetest.NewContext(nil)
+	defer c.Close()
+
+	d := db.NewDatastore(c)
+	d.CreateAll(&CreditCard{Number:1, Owner: "Borges"}, &CreditCard{Number:2, Owner: "Diego"})
+
+	card1 := &CreditCard{Number:1}
+	card2 := &CreditCard{Number:2}
+	err := d.LoadAll(card1, card2)
+
+	expect := goexpect.New(t)
+	expect(err).ToBe(nil)
+	expect(card1.Owner).ToBe("Borges")
+	expect(card1.Key().String()).ToBe("/CreditCard,1")
+	expect(card2.Owner).ToBe("Diego")
+	expect(card2.Key().String()).ToBe("/CreditCard,2")
+}
+
 func TestDatastoreUpdate(t *testing.T) {
 	t.Parallel()
 	c, _ := aetest.NewContext(nil)
