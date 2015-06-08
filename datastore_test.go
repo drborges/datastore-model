@@ -116,6 +116,31 @@ func TestDatastoreLoad(t *testing.T) {
 	expect(card.Key().String()).ToBe("/CreditCard,1")
 }
 
+func TestDatastoreLoadEntityThatHasDbIdInfo(t *testing.T) {
+    type Person struct {
+        db.Model
+        Name string
+    }
+
+    t.Parallel()
+    c, _ := aetest.NewContext(nil)
+    defer c.Close()
+
+    d := db.NewDatastore(c)
+
+    person := &Person{Name:"John"}
+    d.Create(person)
+
+    person2 := &Person{}
+    person2.SetKey(person.Key())
+    err := d.Load(person2)
+
+    expect := goexpect.New(t)
+    expect(err).ToBe(nil)
+    expect(person2.Name).ToBe("John")
+    expect(person2.Key().IntID()).ToBe(person.Key().IntID())
+}
+
 func TestDatastoreLoadAll(t *testing.T) {
 	t.Parallel()
 	c, _ := aetest.NewContext(nil)
