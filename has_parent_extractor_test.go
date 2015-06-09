@@ -23,13 +23,15 @@ func TestHasParentExtractorExtractsFromTagWithoutKindName(t *testing.T) {
 	tag.SetParent(datastore.NewIncompleteKey(c, "Kind", nil))
 
 	meta := &db.Metadata{}
-	fieldModel := reflect.TypeOf(tag).Elem().Field(0)
+	field := reflect.TypeOf(tag).Elem().Field(0)
+	value := reflect.ValueOf(tag).Elem().Field(0)
 
-	err := db.HasParentExtractor{meta}.Extract(tag, fieldModel)
+	err := db.HasParentExtractor{meta}.Extract(tag, field, value)
 
 	expect := goexpect.New(t)
 	expect(err).ToBe(nil)
 	expect(meta.HasParent).ToBe(true)
+	expect(meta.Parent).ToBe(tag.Parent())
 }
 
 func TestHasParentExtractorExtractsFromTagWithKindName(t *testing.T) {
@@ -46,13 +48,15 @@ func TestHasParentExtractorExtractsFromTagWithKindName(t *testing.T) {
 	tag.SetParent(datastore.NewIncompleteKey(c, "Kind", nil))
 
 	meta := &db.Metadata{}
-	fieldModel := reflect.TypeOf(tag).Elem().Field(0)
+	field := reflect.TypeOf(tag).Elem().Field(0)
+	value := reflect.ValueOf(tag).Elem().Field(0)
 
-	err := db.HasParentExtractor{meta}.Extract(tag, fieldModel)
+	err := db.HasParentExtractor{meta}.Extract(tag, field, value)
 
 	expect := goexpect.New(t)
 	expect(err).ToBe(nil)
 	expect(meta.HasParent).ToBe(true)
+	expect(meta.Parent).ToBe(tag.Parent())
 }
 
 func TestHasParentExtractorExtractsFromTagWithoutHasParentMetadata(t *testing.T) {
@@ -64,9 +68,10 @@ func TestHasParentExtractorExtractsFromTagWithoutHasParentMetadata(t *testing.T)
 
 	tag := &Tag{}
 	meta := &db.Metadata{}
-	fieldModel := reflect.TypeOf(tag).Elem().Field(0)
+	field := reflect.TypeOf(tag).Elem().Field(0)
+	value := reflect.ValueOf(tag).Elem().Field(0)
 
-	err := db.HasParentExtractor{meta}.Extract(tag, fieldModel)
+	err := db.HasParentExtractor{meta}.Extract(tag, field, value)
 
 	expect := goexpect.New(t)
 	expect(err).ToBe(nil)
@@ -82,9 +87,10 @@ func TestHasParentExtractorExtractsFromTagWithoutTag(t *testing.T) {
 
 	tag := &Tag{}
 	meta := &db.Metadata{}
-	fieldModel := reflect.TypeOf(tag).Elem().Field(0)
+	field := reflect.TypeOf(tag).Elem().Field(0)
+	value := reflect.ValueOf(tag).Elem().Field(0)
 
-	err := db.HasParentExtractor{meta}.Extract(tag, fieldModel)
+	err := db.HasParentExtractor{meta}.Extract(tag, field, value)
 
 	expect := goexpect.New(t)
 	expect(err).ToBe(nil)
@@ -100,11 +106,35 @@ func TestHasParentExtractorExtractsReturnsErrMissingParentKey(t *testing.T) {
 
 	tag := &Tag{}
 	meta := &db.Metadata{}
-	fieldModel := reflect.TypeOf(tag).Elem().Field(0)
+	field := reflect.TypeOf(tag).Elem().Field(0)
+	value := reflect.ValueOf(tag).Elem().Field(0)
 
-	err := db.HasParentExtractor{meta}.Extract(tag, fieldModel)
+	err := db.HasParentExtractor{meta}.Extract(tag, field, value)
 
 	expect := goexpect.New(t)
 	expect(err).ToBe(db.ErrMissingParentKey)
 	expect(meta.HasParent).ToBe(true)
+	expect(meta.Parent).ToBe((*datastore.Key)(nil))
+}
+
+func TestHasParentExtractorOnlyAcceptsFieldTypeModel(t *testing.T) {
+	t.Parallel()
+	type Tag struct {
+		db.Model
+		String string
+		Int int
+		Rune rune
+		Slice []string
+		Map map[string]string
+	}
+
+	tag := &Tag{}
+	elem := reflect.TypeOf(tag).Elem()
+
+	expect := goexpect.New(t)
+	expect(db.HasParentExtractor{}.Accept(elem.Field(0))).ToBe(true)
+	expect(db.HasParentExtractor{}.Accept(elem.Field(1))).ToBe(false)
+	expect(db.HasParentExtractor{}.Accept(elem.Field(2))).ToBe(false)
+	expect(db.HasParentExtractor{}.Accept(elem.Field(3))).ToBe(false)
+	expect(db.HasParentExtractor{}.Accept(elem.Field(4))).ToBe(false)
 }

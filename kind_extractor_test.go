@@ -15,9 +15,10 @@ func TestKindExtractorExtractsKindFromNonTaggedModel(t *testing.T) {
 
 	tag := &Tag{}
 	meta := &db.Metadata{}
-	fieldModel := reflect.TypeOf(tag).Elem().Field(0)
+	field := reflect.TypeOf(tag).Elem().Field(0)
+	value := reflect.ValueOf(tag).Elem().Field(0)
 
-	err := db.KindExtractor{meta}.Extract(tag, fieldModel)
+	err := db.KindExtractor{meta}.Extract(tag, field, value)
 
 	expect := goexpect.New(t)
 	expect(err).ToBe(nil)
@@ -32,9 +33,10 @@ func TestKindExtractorExtractsKindFromTag(t *testing.T) {
 
 	tag := &Tag{}
 	meta := &db.Metadata{}
-	fieldModel := reflect.TypeOf(tag).Elem().Field(0)
+	field := reflect.TypeOf(tag).Elem().Field(0)
+	value := reflect.ValueOf(tag).Elem().Field(0)
 
-	err := db.KindExtractor{meta}.Extract(tag, fieldModel)
+	err := db.KindExtractor{meta}.Extract(tag, field, value)
 
 	expect := goexpect.New(t)
 	expect(err).ToBe(nil)
@@ -49,9 +51,9 @@ func TestKindExtractorAccpetsModelEmbeddedField(t *testing.T) {
 
 	tag := &Tag{}
 	meta := &db.Metadata{}
-	fieldModel := reflect.TypeOf(tag).Elem().Field(0)
+	field := reflect.TypeOf(tag).Elem().Field(0)
 
-	accepts := db.KindExtractor{meta}.Accept(fieldModel)
+	accepts := db.KindExtractor{meta}.Accept(field)
 
 	expect := goexpect.New(t)
 	expect(accepts).ToBe(true)

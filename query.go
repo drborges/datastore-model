@@ -1,11 +1,13 @@
 package db
 
-import "appengine/datastore"
+import (
+	"appengine/datastore"
+)
 
 func From(e entity) *Query {
-	resolver := NewKeyResolver(nil)
-	resolver.ExtractKindMetadata(e)
-	return &Query{datastore.NewQuery(resolver.Metadata.Kind)}
+	metadata := &Metadata{}
+	MetadataExtractorChain{KindExtractor{metadata}}.ExtractFrom(e)
+	return &Query{datastore.NewQuery(metadata.Kind)}
 }
 
 type Query struct {

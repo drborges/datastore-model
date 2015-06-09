@@ -1,6 +1,8 @@
 package db
 
-import "appengine/memcache"
+import (
+	"appengine/memcache"
+)
 
 type CachedDatastore struct {
 	Datastore

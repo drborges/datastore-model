@@ -13,7 +13,7 @@ func (this KindExtractor) Accept(f reflect.StructField) bool {
 	return f.Type.Name() == reflect.TypeOf(Model{}).Name()
 }
 
-func (this KindExtractor) Extract(e entity, f reflect.StructField) error {
+func (this KindExtractor) Extract(e entity, f reflect.StructField, v reflect.Value) error {
 	elem := reflect.TypeOf(e).Elem()
 	this.Metadata.Kind = elem.Name()
 
