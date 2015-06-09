@@ -78,7 +78,10 @@ func (this Datastore) CreateAll(es ...entity) error {
 		keys[i] = e.Key()
 		e.SetCreatedAt(this.Clock())
 	}
-	_, err := datastore.PutMulti(this.context, keys, es)
+	generatedKeys, err := datastore.PutMulti(this.context, keys, es)
+	for i, k := range generatedKeys {
+		es[i].SetKey(k)
+	}
 	return err
 }
 
