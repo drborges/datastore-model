@@ -192,24 +192,3 @@ func TestKeyResolverResolve(t *testing.T) {
 	expect(card.Key().String()).ToBe("/People,Borges/CreditCard,123123")
 }
 
-func TestKeyResolverResolveAlreadyResolvedKey(t *testing.T) {
-	c, _ := aetest.NewContext(nil)
-	defer c.Close()
-
-	type CreditCard struct {
-		db.Model      `db:",hasparent"`
-		Number int    `db:"id"`
-		Owner  string
-	}
-
-	key := datastore.NewKey(c, "CreditCard", "123123", 0, nil)
-	card := new(CreditCard)
-	card.Number = 123
-	card.SetKey(key)
-
-	err := db.NewKeyResolver(c).Resolve(card)
-
-	expect := goexpect.New(t)
-	expect(err).ToBe(nil)
-	expect(card.Key()).ToBe(key)
-}
