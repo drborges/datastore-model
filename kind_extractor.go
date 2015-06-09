@@ -6,7 +6,6 @@ import (
 )
 
 type KindExtractor struct {
-	Entity entity
 	Metadata *Metadata
 }
 
@@ -14,8 +13,8 @@ func (this KindExtractor) Accept(f reflect.StructField) bool {
 	return f.Type.Name() == reflect.TypeOf(Model{}).Name()
 }
 
-func (this KindExtractor) Extract(f reflect.StructField) error {
-	elem := reflect.TypeOf(this.Entity).Elem()
+func (this KindExtractor) Extract(e entity, f reflect.StructField) error {
+	elem := reflect.TypeOf(e).Elem()
 	this.Metadata.Kind = elem.Name()
 
 	kindMetadata := f.Tag.Get("db")

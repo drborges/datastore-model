@@ -3,9 +3,9 @@ package db
 import "appengine/datastore"
 
 func From(e entity) *Query {
-	meta := KeyResolver{}
-	meta.ExtractKindMetadata(e)
-	return &Query{datastore.NewQuery(meta.Kind)}
+	resolver := NewKeyResolver(nil)
+	resolver.ExtractKindMetadata(e)
+	return &Query{datastore.NewQuery(resolver.Metadata.Kind)}
 }
 
 type Query struct {

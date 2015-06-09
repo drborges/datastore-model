@@ -15,5 +15,5 @@ type Metadata struct {
 
 type MetadataExtractor interface {
 	Accept(reflect.StructField) bool
-	Extract(reflect.StructField) error
+	Extract(entity, reflect.StructField) error
 }
