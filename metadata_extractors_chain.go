@@ -14,7 +14,7 @@ func NewKeyResolverExtractorChain(metadata *Metadata) MetadataExtractorChain {
 }
 
 // TODO Move related Tests from key_resolver_tests to metadata_extractors_chain_test
-func (this MetadataExtractorChain) ExtractFrom(e entity) error {
+func (this MetadataExtractorChain) ExtractFrom(e Entity) error {
 	elemType := reflect.TypeOf(e).Elem()
 	elemValue := reflect.ValueOf(e).Elem()
 

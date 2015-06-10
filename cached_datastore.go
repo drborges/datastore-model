@@ -8,7 +8,7 @@ type CachedDatastore struct {
 	Datastore
 }
 
-func (this CachedDatastore) Load(m model) error {
+func (this CachedDatastore) Load(m Entity) error {
 	if err := this.ResolveKey(m); err != nil {
 		return err
 	}
@@ -21,7 +21,7 @@ func (this CachedDatastore) Load(m model) error {
 	return err
 }
 
-func (this CachedDatastore) Create(m model) error {
+func (this CachedDatastore) Create(m Entity) error {
 	if err := this.ResolveKey(m); err != nil {
 		return err
 	}
@@ -38,7 +38,7 @@ func (this CachedDatastore) Create(m model) error {
 	return memcache.JSON.Set(this.context, item)
 }
 
-func (this CachedDatastore) Update(m model) error {
+func (this CachedDatastore) Update(m Entity) error {
 	if err := this.ResolveKey(m); err != nil {
 		return err
 	}
@@ -55,7 +55,7 @@ func (this CachedDatastore) Update(m model) error {
 	return memcache.JSON.Set(this.context, item)
 }
 
-func (this CachedDatastore) Delete(m model) error {
+func (this CachedDatastore) Delete(m Entity) error {
 	if err := this.ResolveKey(m); err != nil {
 		return err
 	}

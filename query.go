@@ -4,7 +4,7 @@ import (
 	"appengine/datastore"
 )
 
-func From(e entity) *Query {
+func From(e Entity) *Query {
 	metadata := &Metadata{}
 	MetadataExtractorChain{KindExtractor{metadata}}.ExtractFrom(e)
 	return &Query{datastore.NewQuery(metadata.Kind)}

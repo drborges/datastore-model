@@ -23,7 +23,7 @@ func (this IntIdExtractor) Accept(f reflect.StructField) bool {
 	}
 }
 
-func (this IntIdExtractor) Extract(e entity, f reflect.StructField, v reflect.Value) error {
+func (this IntIdExtractor) Extract(e Entity, f reflect.StructField, v reflect.Value) error {
 	value := v.Int()
 	if value == 0 {
 		return ErrMissingIntId

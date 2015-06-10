@@ -39,7 +39,7 @@ func (this Querier) All(slice interface{}) error {
 //
 // datastore.Done is returned if there is no
 // matched item
-func (this Querier) First(e entity) error {
+func (this Querier) First(e Entity) error {
 	i := this.q.Run(this.c)
 	key, err := i.Next(e)
 	if err != nil {
@@ -55,15 +55,15 @@ func (this Querier) First(e entity) error {
 //
 // It panics in case the slice parameter is not either
 // a slice or a slice pointer
-func EntityAt(slice interface{}, i int) entity {
+func EntityAt(slice interface{}, i int) Entity {
 	s := reflect.ValueOf(slice)
 
 	if s.Kind() == reflect.Slice {
-		return s.Index(i).Interface().(entity)
+		return s.Index(i).Interface().(Entity)
 	}
 
 	if s.Kind() == reflect.Ptr && s.Type().Elem().Kind() == reflect.Slice {
-		return s.Elem().Index(i).Interface().(entity)
+		return s.Elem().Index(i).Interface().(Entity)
 	}
 
 	panic(ErrInvalidType)

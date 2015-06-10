@@ -26,7 +26,7 @@ func NewKeyResolver(c appengine.Context) *KeyResolver {
 //
 // ErrMissingIntId is returned in case an int field
 // is tagged with db:"id" and is 0
-func (this *KeyResolver) Resolve(e entity) (*Metadata, error) {
+func (this *KeyResolver) Resolve(e Entity) (*Metadata, error) {
 	metadata := &Metadata{}
 
 	if err := NewKeyResolverExtractorChain(metadata).ExtractFrom(e); err != nil {
