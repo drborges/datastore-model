@@ -10,6 +10,7 @@ func NewKeyResolverExtractorChain(metadata *Metadata) MetadataExtractorChain {
 		StringIdExtractor{metadata},
 		KindExtractor{metadata},
 		HasParentExtractor{metadata},
+		CacheStringIdExtractor{metadata},
 	}
 }
 

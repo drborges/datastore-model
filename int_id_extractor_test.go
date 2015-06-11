@@ -1,10 +1,10 @@
 package db_test
 
 import (
-	"testing"
 	"github.com/drborges/datastore-model"
 	"github.com/drborges/goexpect"
 	"reflect"
+	"testing"
 )
 
 func TestIntIdExtractorExtractsId(t *testing.T) {
@@ -15,7 +15,7 @@ func TestIntIdExtractorExtractsId(t *testing.T) {
 		Number int `db:"id"`
 	}
 
-	card := &CreditCard{Number:123}
+	card := &CreditCard{Number: 123}
 	field := reflect.TypeOf(card).Elem().Field(1)
 	value := reflect.ValueOf(card).Elem().Field(1)
 
@@ -53,17 +53,17 @@ func TestIntIdExtractorAcceptsTaggedIntFields(t *testing.T) {
 	type MyModel struct {
 		db.Model
 		String string
-		Byte byte
-		Map map[string]string
-		Slice []string
+		Byte   byte
+		Map    map[string]string
+		Slice  []string
 		Struct struct {
 			Int int
 		}
-		Int int     `db:"id"`
-		Int8 int8   `db:"id"`
-		Int16 int16 `db:"id"`
-		Int32 int32 `db:"id"`
-		Int64 int64 `db:"id"`
+		Int            int   `db:"id"`
+		Int8           int8  `db:"id"`
+		Int16          int16 `db:"id"`
+		Int32          int32 `db:"id"`
+		Int64          int64 `db:"id"`
 		NotTaggedInt64 int64
 	}
 
@@ -85,4 +85,3 @@ func TestIntIdExtractorAcceptsTaggedIntFields(t *testing.T) {
 	expect(extractor.Accept(elem.Field(10))).ToBe(true)
 	expect(extractor.Accept(elem.Field(11))).ToBe(false)
 }
-

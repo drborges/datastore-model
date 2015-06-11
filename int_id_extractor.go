@@ -1,7 +1,7 @@
 package db
 
 import (
-"reflect"
+	"reflect"
 )
 
 type IntIdExtractor struct {
@@ -18,8 +18,10 @@ func (this IntIdExtractor) Accept(f reflect.StructField) bool {
 		reflect.Int8,
 		reflect.Int16,
 		reflect.Int32,
-		reflect.Int64: return true
-	default: return false
+		reflect.Int64:
+		return true
+	default:
+		return false
 	}
 }
 

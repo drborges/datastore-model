@@ -7,12 +7,12 @@ import (
 )
 
 var (
-	diego  = &Person{Name:"Diego", Country:"Brazil"}
-	munjal = &Person{Name:"Munjal", Country:"USA"}
+	diego  = &Person{Name: "Diego", Country: "Brazil"}
+	munjal = &Person{Name: "Munjal", Country: "USA"}
 )
 
 type Person struct {
-	db.Model        `db:"People"`
+	db.Model `db:"People"`
 	Name     string `db:"id"`
 	Country  string
 }

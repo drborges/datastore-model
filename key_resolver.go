@@ -1,8 +1,8 @@
 package db
 
 import (
-	"appengine/datastore"
 	"appengine"
+	"appengine/datastore"
 )
 
 type KeyResolver struct {
@@ -44,6 +44,10 @@ func (this *KeyResolver) Resolve(e Entity) (*Metadata, error) {
 		metadata.IntID,
 		metadata.Parent,
 	))
+
+	if metadata.CacheStringID == "" {
+		metadata.CacheStringID = e.StringId()
+	}
 
 	return metadata, nil
 }

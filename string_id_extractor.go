@@ -1,7 +1,7 @@
 package db
 
 import (
-"reflect"
+	"reflect"
 )
 
 type StringIdExtractor struct {

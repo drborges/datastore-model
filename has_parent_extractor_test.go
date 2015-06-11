@@ -1,12 +1,12 @@
 package db_test
 
 import (
-	"testing"
+	"appengine/aetest"
+	"appengine/datastore"
 	"github.com/drborges/datastore-model"
 	"github.com/drborges/goexpect"
 	"reflect"
-	"appengine/datastore"
-	"appengine/aetest"
+	"testing"
 )
 
 func TestHasParentExtractorExtractsFromTagWithoutKindName(t *testing.T) {
@@ -15,8 +15,8 @@ func TestHasParentExtractorExtractsFromTagWithoutKindName(t *testing.T) {
 	defer c.Close()
 
 	type Tag struct {
-		db.Model    `db:",has_parent"`
-		Name string
+		db.Model `db:",has_parent"`
+		Name     string
 	}
 
 	tag := &Tag{}
@@ -40,8 +40,8 @@ func TestHasParentExtractorExtractsFromTagWithKindName(t *testing.T) {
 	defer c.Close()
 
 	type Tag struct {
-		db.Model    `db:"Tags, has_parent"`
-		Name string
+		db.Model `db:"Tags, has_parent"`
+		Name     string
 	}
 
 	tag := &Tag{}
@@ -62,8 +62,8 @@ func TestHasParentExtractorExtractsFromTagWithKindName(t *testing.T) {
 func TestHasParentExtractorExtractsFromTagWithoutHasParentMetadata(t *testing.T) {
 	t.Parallel()
 	type Tag struct {
-		db.Model    `db:"Tags"`
-		Name string
+		db.Model `db:"Tags"`
+		Name     string
 	}
 
 	tag := &Tag{}
@@ -100,8 +100,8 @@ func TestHasParentExtractorExtractsFromTagWithoutTag(t *testing.T) {
 func TestHasParentExtractorExtractsReturnsErrMissingParentKey(t *testing.T) {
 	t.Parallel()
 	type Tag struct {
-		db.Model   `db:",has_parent"`
-		Name string
+		db.Model `db:",has_parent"`
+		Name     string
 	}
 
 	tag := &Tag{}
@@ -122,10 +122,10 @@ func TestHasParentExtractorOnlyAcceptsFieldTypeModel(t *testing.T) {
 	type Tag struct {
 		db.Model
 		String string
-		Int int
-		Rune rune
-		Slice []string
-		Map map[string]string
+		Int    int
+		Rune   rune
+		Slice  []string
+		Map    map[string]string
 	}
 
 	tag := &Tag{}

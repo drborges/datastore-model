@@ -1,16 +1,17 @@
 package db_test
 
 import (
-	"testing"
-	"github.com/drborges/datastore-model"
 	"appengine/aetest"
-	"github.com/drborges/goexpect"
 	"appengine/datastore"
+	"appengine/memcache"
+	"github.com/drborges/datastore-model"
+	"github.com/drborges/goexpect"
+	"testing"
 )
 
 type MembershipCard struct {
 	db.Model
-	Number int   `db:"id"`
+	Number int `db:"id"`
 	Owner  string
 }
 
@@ -79,4 +80,28 @@ func TestDeletesModelFromCacheAndDatastore(t *testing.T) {
 	expect := goexpect.New(t)
 	expect(err).ToBe(nil)
 	expect(errNoSuchEntity).ToBe(datastore.ErrNoSuchEntity)
+}
+
+func TestCachedDatastoreUsesTaggedFieldAsCacheKey(t *testing.T) {
+	c, _ := aetest.NewContext(nil)
+	defer c.Close()
+
+	type MembershipCard struct {
+		db.Model
+		Number int `db:"id"`
+		Owner  string `cache:"id"`
+	}
+
+	card := &MembershipCard{Number: 123, Owner: "Diego"}
+
+	cds := db.CachedDatastore{db.NewDatastore(c)}
+	cds.Create(card)
+
+	cachedCard := &MembershipCard{}
+	_, err := memcache.JSON.Get(c, "Diego", cachedCard)
+
+	expect := goexpect.New(t)
+	expect(err).ToBe(nil)
+	expect(cachedCard.Number).ToBe(card.Number)
+	expect(cachedCard.Owner).ToBe(card.Owner)
 }

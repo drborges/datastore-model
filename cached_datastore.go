@@ -9,54 +9,55 @@ type CachedDatastore struct {
 }
 
 func (this CachedDatastore) Load(m Entity) error {
-	if err := this.ResolveKey(m); err != nil {
+	metadata, err := this.ResolveKey(m)
+	if err != nil {
 		return err
 	}
-	_, err := memcache.JSON.Get(this.context, m.StringId(), m)
-	if err == memcache.ErrCacheMiss {
+
+	if _, err := memcache.JSON.Get(this.context, metadata.CacheStringID, m); err == memcache.ErrCacheMiss {
 		if err := this.Datastore.Load(m); err != nil {
 			return err
 		}
 	}
+
 	return err
 }
 
 func (this CachedDatastore) Create(m Entity) error {
-	if err := this.ResolveKey(m); err != nil {
+	metadata, err := this.ResolveKey(m)
+	if err != nil {
 		return err
-	}
-
-	item := &memcache.Item{
-		Key:m.StringId(),
-		Object: m,
 	}
 
 	if err := this.Datastore.Create(m); err != nil {
 		return memcache.Delete(this.context, m.StringId())
 	}
 
-	return memcache.JSON.Set(this.context, item)
+	return memcache.JSON.Set(this.context, &memcache.Item{
+		Key:    metadata.CacheStringID,
+		Object: m,
+	})
 }
 
 func (this CachedDatastore) Update(m Entity) error {
-	if err := this.ResolveKey(m); err != nil {
+	metadata, err := this.ResolveKey(m)
+	if err != nil {
 		return err
-	}
-
-	item := &memcache.Item{
-		Key:m.StringId(),
-		Object: m,
 	}
 
 	if err := this.Datastore.Update(m); err != nil {
 		return err
 	}
 
-	return memcache.JSON.Set(this.context, item)
+	return memcache.JSON.Set(this.context, &memcache.Item{
+		Key:    metadata.CacheStringID,
+		Object: m,
+	})
 }
 
 func (this CachedDatastore) Delete(m Entity) error {
-	if err := this.ResolveKey(m); err != nil {
+	metadata, err := this.ResolveKey(m)
+	if err != nil {
 		return err
 	}
 
@@ -64,5 +65,5 @@ func (this CachedDatastore) Delete(m Entity) error {
 		return err
 	}
 
-	return memcache.Delete(this.context, m.StringId())
+	return memcache.Delete(this.context, metadata.CacheStringID)
 }

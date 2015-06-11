@@ -1,10 +1,10 @@
 package db_test
 
 import (
-	"testing"
 	"github.com/drborges/datastore-model"
 	"github.com/drborges/goexpect"
 	"reflect"
+	"testing"
 )
 
 func TestKindExtractorExtractsKindFromNonTaggedModel(t *testing.T) {
@@ -27,8 +27,8 @@ func TestKindExtractorExtractsKindFromNonTaggedModel(t *testing.T) {
 
 func TestKindExtractorExtractsKindFromTag(t *testing.T) {
 	type Tag struct {
-		db.Model   `db:"Tags"`
-		Name string
+		db.Model `db:"Tags"`
+		Name     string
 	}
 
 	tag := &Tag{}
@@ -74,4 +74,3 @@ func TestKindExtractorDoesNotAccpetNonModelEmbeddedField(t *testing.T) {
 	expect := goexpect.New(t)
 	expect(accepts).ToBe(false)
 }
-
