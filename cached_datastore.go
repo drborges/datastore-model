@@ -30,7 +30,7 @@ func (this CachedDatastore) Create(m Entity) error {
 	}
 
 	if err := this.Datastore.Create(m); err != nil {
-		return memcache.Delete(this.context, m.StringId())
+		return err
 	}
 
 	return memcache.JSON.Set(this.context, &memcache.Item{
