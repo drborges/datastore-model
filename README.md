@@ -230,7 +230,27 @@ cardFromCache := &MembershipCard{Number: 1}
 err := cds.Load(cardFromCache)
 ```
 
-`CachedDatastore` uses the encoded entity's key (`card.StringId()`) as the memcache key. As of now there is no mechanism to override that behavior. 
+`CachedDatastore` uses by default the encoded entity's key (`card.StringId()`) as the memcache key.
+
+#### Overriding Cache Key
+
+One can tag a particular struct `string` field to be used as cache key as follows:
+
+```go
+type MembershipCard struct {
+	db.Model
+	Number int    `db:"id"`
+	Owner  string `cache:"id"`
+}
+
+cds := db.CachedDatastore{db.NewDatastore(c)}
+
+card := &MembershipCard{Owner: "Borges", Number: 1}
+cds.Create(card)
+
+cardFromCache := &MembershipCard{Owner: "Borges"}
+err := cds.Load(cardFromCache)
+```
 
 # Future Work
 
