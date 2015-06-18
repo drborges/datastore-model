@@ -18,3 +18,8 @@ func (this *Query) Filter(filter string, value interface{}) *Query {
 	this.Query = this.Query.Filter(filter, value)
 	return this
 }
+
+func (this *Query) Project(fieldNames ...string) *Query {
+	this.Query = this.Query.Project(fieldNames...)
+	return this
+}
